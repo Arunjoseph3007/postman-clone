@@ -1,7 +1,7 @@
 import { TrashIcon, PlusIcon, RequestIcon } from "../public/SVGs";
 
 const defaultRequest = {
-  name: "Post Request 50",
+  name: "New Reqeust",
   method: "GET",
   data: "",
   url: "",
@@ -11,7 +11,7 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
   const handleDelete = (index) => {
     if (requestArray.data.length === 1) return;
 
-    if (index === requestArray.data.length-1) {
+    if (index === requestArray.data.length - 1 || index < selectedIndex) {
       setSelectedIndex((prev) => prev - 1);
     }
 
@@ -21,7 +21,7 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
   return (
     <div className="w-1/5 h-screen text-black overflow-[overlay] overflow-y-hidden border-r relative">
       <h1 className="text-4xl h-[70px] flex items-center font-light tracking-widest px-4 border-b-2">
-        POSTMAN
+        CELLO APIs
       </h1>
       <div className="overflow-y-scroll max-h-[calc(100vh-130px)]">
         {requestArray.data.map((elm, i) => (

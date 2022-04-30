@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import axios from "axios";
+import { EditIcon } from "../public/SVGs";
 //https://jsonplaceholder.typicode.com/todos/1
 
 const RequestSection = ({
@@ -10,6 +11,22 @@ const RequestSection = ({
   selectedRequest,
   setSelectedRequest,
 }) => {
+  const nameRef = useRef();
+
+  const handleChange = (e) => {
+    setSelectedRequest((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const newHandleChange = (e) => {
+    setSelectedRequest((prev) => ({
+      ...prev,
+      name: e.target.textContent,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,18 +46,27 @@ const RequestSection = ({
 
   return (
     <div className="w-full border text-black p-3">
-      <h1 className="text-4xl">Request</h1>
+      <div className="flex items-center gap-4">
+        <h1
+          ref={nameRef}
+          className="text-4xl"
+          contentEditable={true}
+          onBlur={newHandleChange}
+          name="name"
+        >
+          {selectedRequest.name}
+        </h1>
+        <EditIcon onClick={() => nameRef.current.focus()} />
+      </div>
       <form
         onSubmit={handleSubmit}
         className="flex w-full border border-black rounded-xl overflow-hidden mt-4"
       >
         <select
-          value={selectedRequest.method}
-          onInput={(e) =>
-            setSelectedRequest((prev) => ({ ...prev, method: e.target.value }))
-          }
-          className="p-3 text-gray-600 border-r pr-6"
           name="method"
+          value={selectedRequest.method}
+          onInput={handleChange}
+          className="p-3 text-gray-600 border-r pr-6"
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
@@ -48,13 +74,12 @@ const RequestSection = ({
           <option value="DELETE">DELETE</option>
         </select>
         <input
+          name="url"
           type="text"
           placeholder="http://example.com"
           className="p-3 text-gray-600 flex-1"
           value={selectedRequest.url}
-          onChange={(e) =>
-            setSelectedRequest((prev) => ({ ...prev, url: e.target.value }))
-          }
+          onChange={handleChange}
         />
         <button className="p-3 text-white bg-black" type="submit">
           SEND
