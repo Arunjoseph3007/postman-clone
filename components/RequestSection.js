@@ -6,13 +6,17 @@ import axios from "axios";
 
 const RequestSection = ({
   setResponse,
+  setResponseTime,
   selectedRequest,
   setSelectedRequest,
 }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const start = new Date().getTime();
       const res = await axios(selectedRequest);
+      const end = new Date().getTime();
+      setResponseTime(end - start);
       setResponse(res);
     } catch (e) {
       setResponse(e.response);
@@ -24,10 +28,11 @@ const RequestSection = ({
   }
 
   return (
-    <div className="w-full h-1/2 border text-black p-3">
+    <div className="w-full border text-black p-3">
+      <h1 className="text-4xl">Request</h1>
       <form
         onSubmit={handleSubmit}
-        className="flex w-full border border-black rounded-xl overflow-hidden"
+        className="flex w-full border border-black rounded-xl overflow-hidden mt-4"
       >
         <select
           value={selectedRequest.method}

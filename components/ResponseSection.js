@@ -3,11 +3,20 @@ import CodeMirror from "@uiw/react-codemirror";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { StatusCode } from "../public/StausCodes";
 
-const ResponseSection = ({ selectedRequest, response }) => {
+const ResponseSection = ({ responseTime, response }) => {
   return (
     <div className="w-full h-1/2 border text-black p-3">
       <div className="flex w-full items-center justify-between pr-4">
         <h1 className="text-4xl">Response</h1>
+        {responseTime && (
+          <div
+            className={`flex gap-3 p-2 rounded-md ${
+              responseTime > 1000 ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            <span>Response Time: {responseTime}ms</span>
+          </div>
+        )}
         {response?.status && (
           <div
             className={`flex gap-3 p-2 rounded-md ${getClasses(
@@ -39,14 +48,11 @@ const ResponseSection = ({ selectedRequest, response }) => {
 export default ResponseSection;
 
 const StatusColors = {
-  1: "yellow",
-  2: "green",
-  3: "yellow",
-  4: "red",
-  5: "red",
+  1: " bg-yellow-200 text-yellow-800 ",
+  2: " bg-green-200 text-green-800 ",
+  3: " bg-yellow-200 text-yellow-800 ",
+  4: " bg-red-200 text-red-800 ",
+  5: " bg-red-200 text-red-800 ",
 };
 
-const getClasses = (code) => {
-  const color = StatusColors[code.toString().charAt(0)] || "";
-  return ` bg-${color}-200 text-${color}-800 `;
-};
+const getClasses = (code) => StatusColors[code.toString().charAt(0)] || "";
