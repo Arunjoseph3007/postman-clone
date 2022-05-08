@@ -12,13 +12,21 @@ export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState();
   const requestArray = useArray(
-    ["GET", "POST", "PUT", "DELETE"].
-    map((method) => ({
+    ["GET", "POST", "PUT", "DELETE"].map((method) => ({
       name: `${method} Request`,
       method: method,
       data: "",
       url: "",
-      headers: "",
+      headers: [
+        { key: "X-custom", value: "header", active: true },
+        { key: "next-cust", value: "yess", active: true },
+        { key: "next-cute", value: "12345", active: true },
+      ],
+      params: [
+        { key: "Params", value: "yess", active: true },
+        { key: "next-cust", value: "no", active: true },
+        { key: "next-cute", value: "12345", active: true },
+      ],
     }))
   );
 
