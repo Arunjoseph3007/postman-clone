@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import axios from "axios";
-import { EditIcon } from "../public/SVGs";
+import { EditIcon, ExclamationIcon } from "../public/SVGs";
 //https://jsonplaceholder.typicode.com/todos/1
 
 const RequestSection = ({
@@ -12,6 +12,9 @@ const RequestSection = ({
   setSelectedRequest,
 }) => {
   const nameRef = useRef();
+  const [isBody, setIsBody] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ message: "" });
 
   const handleChange = (e) => {
     setSelectedRequest((prev) => ({
@@ -29,14 +32,43 @@ const RequestSection = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!selectedRequest.url)
+      return setMessage({ message: "Please Enter URL" });
+
     try {
+      JSON.parse(selectedRequest.data);
+    } catch (e) {
+      return setMessage({ message: e.message + " in body" });
+    }
+    
+    try {
+      JSON.parse(selectedRequest.headers);
+    } catch (e) {
+      return setMessage({ message: e.message + " in headers" });
+    }
+
+    try {
+      setIsLoading(true);
+
+      const data = JSON.parse(selectedRequest.data);
+      const headers = JSON.parse(selectedRequest.headers);
+
       const start = new Date().getTime();
-      const res = await axios(selectedRequest);
+      const res = await axios({
+        url: selectedRequest.url,
+        method: selectedRequest.method,
+        data: data,
+        headers: headers,
+      });
       const end = new Date().getTime();
+
       setResponseTime(end - start);
       setResponse(res);
+      setIsLoading(false);
     } catch (e) {
       setResponse(e.response);
+      setIsLoading(false);
     }
   };
 
@@ -81,20 +113,64 @@ const RequestSection = ({
           value={selectedRequest.url}
           onChange={handleChange}
         />
-        <button className="p-3 text-white bg-black" type="submit">
-          SEND
+        <button
+          disabled={isLoading}
+          className="p-3 text-white bg-black"
+          type="submit"
+        >
+          {isLoading ? "SENDING.." : "SEND"}
         </button>
       </form>
-
+      <div className="flex mt-4 justify-between">
+        <div>
+          <button
+            className={`shadow-sm rounded-t-lg p-2 px-4 text-xl ${
+              isBody && "bg-gray-200"
+            }`}
+            onClick={() => setIsBody(true)}
+          >
+            Body
+          </button>
+          <button
+            className={`shadow-sm rounded-t-lg p-2 px-4 text-xl ${
+              !isBody && "bg-gray-200"
+            }`}
+            onClick={() => setIsBody(false)}
+          >
+            Headers
+          </button>
+        </div>
+        {message.message && (
+          <h1 className="text-md p-2 bg-gray-300 rounded flex items-center gap-2">
+            {<ExclamationIcon />} {message.message}
+          </h1>
+        )}
+      </div>
       <CodeMirror
         value={selectedRequest.data}
+        placeholder="Enter body of request"
+        name={"data"}
         theme="dark"
-        className="w-full rounded-md border mt-4 overflow-hidden"
+        style={{ display: !isBody && "none" }}
+        className={`w-full rounded-md border overflow-hidden`}
         height="200px"
         extensions={[json()]}
-        onChange={(value, v) =>
-          setSelectedRequest((prev) => ({ ...prev, data: value }))
-        }
+        onChange={(value, v) => {
+          setSelectedRequest((prev) => ({ ...prev, data: value }));
+        }}
+      />
+      <CodeMirror
+        value={selectedRequest.headers}
+        placeholder="Enter headers of request"
+        name={"headers"}
+        theme="dark"
+        style={{ display: isBody && "none" }}
+        className={`w-full rounded-md border overflow-hidden `}
+        height="200px"
+        extensions={[json()]}
+        onChange={(value, v) => {
+          setSelectedRequest((prev) => ({ ...prev, headers: value }));
+        }}
       />
     </div>
   );

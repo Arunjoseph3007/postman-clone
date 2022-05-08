@@ -11,12 +11,16 @@ export default function Home() {
   const [responseTime, setResponseTime] = useState();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState();
-  const requestArray = useArray([
-    { name: "Get Request", method: "GET", data: "", url: "" },
-    { name: "Post Request", method: "POST", data: "", url: "" },
-    { name: "Delete Request", method: "DELETE", data: "", url: "" },
-    { name: "Put Request", method: "PUT", data: "", url: "" },
-  ]);
+  const requestArray = useArray(
+    ["GET", "POST", "PUT", "DELETE"].
+    map((method) => ({
+      name: `${method} Request`,
+      method: method,
+      data: "",
+      url: "",
+      headers: "",
+    }))
+  );
 
   useEffect(() => {
     setSelectedRequest(requestArray.data[selectedIndex]);
@@ -32,13 +36,13 @@ export default function Home() {
       <Head>
         <title>Cello APIs</title>
       </Head>
-      <div className="h-screen w-full flex bg-gray-100 text-white">
+      <div className="h-screen w-full flex bg-gray-100 text-white overflow-hidden">
         <LeftBar
           requestArray={requestArray}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
         />
-        <div className="w-4/5 h-screen overflow-hidden">
+        <div className="w-4/5 h-screen overflow-auto">
           <RequestSection
             setResponseTime={setResponseTime}
             setSelectedRequest={setSelectedRequest}

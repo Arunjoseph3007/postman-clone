@@ -34,7 +34,7 @@ export const RequestIcon = ({ method }) => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 inline-block text-red-400"
+        className="h-6 w-6 inline-block text-red-400"
         viewBox="0 0 20 20"
         fill="currentColor"
       >
@@ -50,8 +50,8 @@ export const RequestIcon = ({ method }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`h-5 w-5 inline-block text-green-400 ${
-        method === "POST" && "rotate-180"
+      className={`h-6 w-6 inline-block text-green-400 ${
+        method === "POST" && "rotate-180 text-blue-300"
       } ${method === "PUT" && "text-yellow-400 rotate-180"}`}
       viewBox="0 0 20 20"
       fill="currentColor"
@@ -71,12 +71,27 @@ export const EditIcon = (props) => (
     className="h-7 w-7 text-gray-400 hover:text-gray-800 cursor-pointer"
     viewBox="0 0 20 20"
     fill="currentColor"
-    onClick={props.onClick}
+    {...props}
   >
     <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
     <path
       fillRule="evenodd"
       d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+export const ExclamationIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      fillRule="evenodd"
+      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
       clipRule="evenodd"
     />
   </svg>
