@@ -5,15 +5,23 @@ const defaultRequest = {
   method: "GET",
   data: "",
   url: "",
+  headers: [
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+  ],
+  params: [
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+  ],
 };
 
 const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
   const handleDelete = (index) => {
-    if (requestArray.data.length === 1) return;
+    if (index === selectedIndex) return;
 
-    if (index === requestArray.data.length - 1 || index < selectedIndex) {
-      setSelectedIndex((prev) => prev - 1);
-    }
+    if (index < selectedIndex) setSelectedIndex((prev) => prev - 1);
 
     requestArray.remove(index);
   };
@@ -23,15 +31,15 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
       <h1 className="text-4xl h-[70px] flex items-center font-light tracking-widest px-4 border-b-2">
         CELLO APIs
       </h1>
-      <div className="overflow-y-scroll max-h-[calc(100vh-130px)]">
+      <div className="overflow-y-scroll max-h-[calc(100vh-130px)] pb-40">
         {requestArray.data.map((elm, i) => (
           <div
-            className={`py-2 px-3 text-xl capitalize border-b flex items-center justify-between ${
+            className={`group py-2 px-3 text-xl capitalize border-b flex items-center justify-between relative ${
               selectedIndex === i && "bg-gray-300"
             }`}
             key={i}
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center ">
               <RequestIcon method={elm.method} />
               <p className="cursor-pointer" onClick={() => setSelectedIndex(i)}>
                 {elm.name}
@@ -40,6 +48,11 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
             <button onClick={() => handleDelete(i)}>
               <TrashIcon />
             </button>
+            <div className="absolute hidden translate-y-14 translate-x-1/2 z-50 overflow-visible px-2 py-1 text-sm rounded-md pointer-events-none group-hover:block bg-gray-800 text-white">
+              name : {elm.name} <br />
+              method : {elm.method} <br />
+              url : {elm.url}
+            </div>
           </div>
         ))}
       </div>

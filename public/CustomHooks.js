@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function useArray(defaultValue) {
   const [array, setArray] = useState(defaultValue);
@@ -19,5 +19,17 @@ export function useArray(defaultValue) {
 
   const clear = () => setArray([]);
 
-  return { data: array, set: setArray, push, filter, update, remove, clear };
+  const saveSession = () =>
+    localStorage.setItem("session", JSON.stringify(array));
+
+  return {
+    data: array,
+    setData: setArray,
+    push,
+    filter,
+    update,
+    remove,
+    clear,
+    saveSession,
+  };
 }

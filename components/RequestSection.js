@@ -1,28 +1,20 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import axios from "axios";
-import { EditIcon, ExclamationIcon, PlusIcon, TrashIcon } from "../public/SVGs";
+import { ExclamationIcon, PlusIcon, TrashIcon } from "../public/SVGs";
 //https://jsonplaceholder.typicode.com/todos/1
 
 const newItem = { key: "", value: "", active: true };
-
-const arrayToObjectFormatter = (array) => {
-  return array
-    .filter((elm) => elm.key && elm.value && elm.active)
-    .reduce(
-      (currentObj, newElm) => ({ ...currentObj, [newElm.key]: newElm.value }),
-      {}
-    );
-};
 
 const RequestSection = ({
   setResponse,
   setResponseTime,
   selectedRequest,
   setSelectedRequest,
+  saveSession,
+  newSession,
 }) => {
-  const nameRef = useRef();
   const [openTab, setOpenTab] = useState("body");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ message: "" });
@@ -34,53 +26,30 @@ const RequestSection = ({
     }));
   };
 
-  const newHandleChange = (e) => {
-    setSelectedRequest((prev) => ({
-      ...prev,
-      name: e.target.textContent,
-    }));
-  };
-
   const handleArrayChange = (e, parameter, i) => {
-    setSelectedRequest((prev) => ({
-      ...prev,
-      headers: [
-        ...prev.headers.slice(0, i),
-        { ...prev.headers[i], [parameter]: e.target.value },
-        ...prev.headers.slice(i + 1, prev.headers.length),
-      ],
-    }));
-  };
+    const field = e.target.name;
+    const fieldArray = selectedRequest[field];
 
-  const handleArrayChangeForParams = (e, parameter, i) => {
     setSelectedRequest((prev) => ({
       ...prev,
-      params: [
-        ...prev.params.slice(0, i),
-        { ...prev.params[i], [parameter]: e.target.value },
-        ...prev.params.slice(i + 1, prev.params.length),
+      [field]: [
+        ...fieldArray.slice(0, i),
+        { ...fieldArray[i], [parameter]: e.target.value },
+        ...fieldArray.slice(i + 1, fieldArray.length),
       ],
     }));
   };
 
   const handleArrayToggle = (e, i) => {
-    setSelectedRequest((prev) => ({
-      ...prev,
-      headers: [
-        ...prev.headers.slice(0, i),
-        { ...prev.headers[i], active: e.target.checked },
-        ...prev.headers.slice(i + 1, prev.headers.length),
-      ],
-    }));
-  };
+    const field = e.target.name;
+    const fieldArray = selectedRequest[field];
 
-  const handleArrayToggleForParams = (e, i) => {
     setSelectedRequest((prev) => ({
       ...prev,
-      params: [
-        ...prev.params.slice(0, i),
-        { ...prev.params[i], active: e.target.checked },
-        ...prev.params.slice(i + 1, prev.params.length),
+      [field]: [
+        ...fieldArray.slice(0, i),
+        { ...fieldArray[i], active: e.target.checked },
+        ...fieldArray.slice(i + 1, fieldArray.length),
       ],
     }));
   };
@@ -88,32 +57,36 @@ const RequestSection = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //Ensure valid inputs
     if (!selectedRequest.url)
       return setMessage({ message: "Please Enter URL" });
 
     try {
-      JSON.parse(selectedRequest.data);
+      selectedRequest.data &&
+        JSON.parse(selectedRequest.data);
     } catch (e) {
       return setMessage({ message: e.message + " in body" });
     }
 
+    //REQUEST
     try {
       setIsLoading(true);
 
-      const data = JSON.parse(selectedRequest.data);
-      const headers = arrayToObjectFormatter(selectedRequest.headers);
-      const params = arrayToObjectFormatter(selectedRequest.params);
-
-      const start = new Date().getTime();
-      const res = await axios({
+      //Get data for request
+      const config = {
         url: selectedRequest.url,
         method: selectedRequest.method,
-        data: data,
-        headers: headers,
-        params: params,
-      });
+        data: selectedRequest.data && JSON.parse(selectedRequest.data),
+        headers: arrayToObjectFormatter(selectedRequest.headers),
+        params: arrayToObjectFormatter(selectedRequest.params),
+      };
+
+      //Make request
+      const start = new Date().getTime();
+      const res = await axios(config);
       const end = new Date().getTime();
 
+      //Make suitable state updates
       setResponseTime(end - start);
       setResponse(res);
       setIsLoading(false);
@@ -131,17 +104,26 @@ const RequestSection = ({
     <div className="w-full border text-black p-3">
       {/* Head section */}
       <div className="flex items-center gap-4">
-        <h1
-          ref={nameRef}
-          className="text-4xl"
-          contentEditable={true}
-          onBlur={newHandleChange}
+        <input
+          value={selectedRequest.name}
+          className="bg-transparent flex-1 text-4xl"
+          onInput={handleChange}
           name="name"
+        />
+        <button
+          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          onClick={saveSession}
         >
-          {selectedRequest.name}
-        </h1>
-        <EditIcon onClick={() => nameRef.current.focus()} />
+          Save Session
+        </button>
+        <button
+          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          onClick={newSession}
+        >
+          New Session
+        </button>
       </div>
+
       {/* From sectiom */}
       <form
         onSubmit={handleSubmit}
@@ -174,6 +156,7 @@ const RequestSection = ({
           {isLoading ? "SENDING.." : "SEND"}
         </button>
       </form>
+
       {/* Tab controls */}
       <div className="flex mt-4 justify-between">
         <div>
@@ -208,6 +191,7 @@ const RequestSection = ({
           </h1>
         )}
       </div>
+
       {/* Body Section */}
       <CodeMirror
         value={selectedRequest.data}
@@ -222,6 +206,7 @@ const RequestSection = ({
           setSelectedRequest((prev) => ({ ...prev, data: value }));
         }}
       />
+
       {/* Headers section */}
       <div
         style={{ display: openTab !== "headers" && "none" }}
@@ -232,12 +217,14 @@ const RequestSection = ({
             <input
               className="mx-4 bg-black accent-gray-900"
               type="checkbox"
+              name="headers"
               checked={header.active}
               onChange={(e) => handleArrayToggle(e, i)}
             />
             <input
               className="flex-1 border-x p-3 text-xl "
               type="text"
+              name="headers"
               placeholder="Key"
               value={header.key}
               onChange={(e) => handleArrayChange(e, "key", i)}
@@ -245,6 +232,7 @@ const RequestSection = ({
             <input
               className="flex-1 border-x p-3 text-xl "
               type="text"
+              name="headers"
               placeholder="Value"
               value={header.value}
               onChange={(e) => handleArrayChange(e, "value", i)}
@@ -277,6 +265,7 @@ const RequestSection = ({
           <PlusIcon />
         </button>
       </div>
+
       {/* Params section */}
       <div
         style={{ display: openTab !== "params" && "none" }}
@@ -287,22 +276,25 @@ const RequestSection = ({
             <input
               className="mx-4 bg-black accent-gray-900"
               type="checkbox"
+              name="params"
               checked={param.active}
-              onChange={(e) => handleArrayToggleForParams(e, i)}
+              onChange={(e) => handleArrayToggle(e, i)}
             />
             <input
               className="flex-1 border-x p-3 text-xl "
               type="text"
+              name="params"
               placeholder="Key"
               value={param.key}
-              onChange={(e) => handleArrayChangeForParams(e, "key", i)}
+              onChange={(e) => handleArrayChange(e, "key", i)}
             />
             <input
               className="flex-1 border-x p-3 text-xl "
               type="text"
+              name="params"
               placeholder="Value"
               value={param.value}
-              onChange={(e) => handleArrayChangeForParams(e, "value", i)}
+              onChange={(e) => handleArrayChange(e, "value", i)}
             />
             <button
               onClick={() =>
@@ -337,3 +329,18 @@ const RequestSection = ({
 };
 
 export default RequestSection;
+
+const arrayToObjectFormatter = (array) => {
+  return array
+    .filter(
+      (elm) =>
+        elm.key && elm.value && elm.active && elm.key.split(" ").length === 1
+    )
+    .reduce(
+      (currentObj, newElm) => ({
+        ...currentObj,
+        [newElm.key]: newElm.value,
+      }),
+      {}
+    );
+};

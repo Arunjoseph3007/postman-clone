@@ -5,39 +5,50 @@ import ResponseSection from "../components/ResponseSection";
 import { useState, useEffect } from "react";
 import { useArray } from "../public/CustomHooks";
 //https://jsonplaceholder.typicode.com/todos/1
+const defaultArray = ["GET", "POST", "PUT", "DELETE"].map((method) => ({
+  name: `${method} Request`,
+  method: method,
+  data: "",
+  url: "",
+  headers: [
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+  ],
+  params: [
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+    { key: "", value: "", active: true },
+  ],
+}));
 
 export default function Home() {
   const [response, setResponse] = useState();
   const [responseTime, setResponseTime] = useState();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState();
-  const requestArray = useArray(
-    ["GET", "POST", "PUT", "DELETE"].map((method) => ({
-      name: `${method} Request`,
-      method: method,
-      data: "",
-      url: "",
-      headers: [
-        { key: "X-custom", value: "header", active: true },
-        { key: "next-cust", value: "yess", active: true },
-        { key: "next-cute", value: "12345", active: true },
-      ],
-      params: [
-        { key: "Params", value: "yess", active: true },
-        { key: "next-cust", value: "no", active: true },
-        { key: "next-cute", value: "12345", active: true },
-      ],
-    }))
-  );
+  const requestArray = useArray(defaultArray);
+
+  const newSession = () => {
+    setSelectedRequest(defaultArray[0]);
+    requestArray.setData(defaultArray);
+    localStorage.removeItem("session");
+  };
 
   useEffect(() => {
     setSelectedRequest(requestArray.data[selectedIndex]);
   }, [selectedIndex]);
 
   useEffect(() => {
-    if (!selectedRequest) return;
-    requestArray.update(selectedIndex, selectedRequest);
+    selectedRequest && requestArray.update(selectedIndex, selectedRequest);
   }, [selectedRequest]);
+
+  useEffect(() => {
+    const session = JSON.parse(localStorage.getItem("session"));
+    if (!session) return;
+    requestArray.setData(session);
+    setSelectedRequest(session[selectedIndex]);
+  }, []);
 
   return (
     <>
@@ -56,6 +67,8 @@ export default function Home() {
             setSelectedRequest={setSelectedRequest}
             selectedRequest={selectedRequest}
             setResponse={setResponse}
+            saveSession={requestArray.saveSession}
+            newSession={newSession}
           />
           <ResponseSection response={response} responseTime={responseTime} />
         </div>
