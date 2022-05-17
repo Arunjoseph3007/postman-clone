@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import axios from "axios";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import axios from "axios";
+import { useState, useRef } from "react";
 import { ExclamationIcon, PlusIcon } from "../public/SVGs";
+import { arrayToObjectFormatter } from "../public/utils";
 import InputGroup from "./InputGroup";
 import GetCodeDialog from "./GetCodeDialog";
 //https://jsonplaceholder.typicode.com/todos/1
@@ -113,7 +114,7 @@ const RequestSection = ({
           name="method"
           value={selectedRequest.method}
           onInput={handleChange}
-          className="p-3 text-gray-600 border-r pr-6"
+          className="p-3 text-gray-600 border-r pr-3 "
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
@@ -175,6 +176,7 @@ const RequestSection = ({
       {/* Body Section */}
       <CodeMirror
         value={selectedRequest.data}
+        spellCheck={true}
         placeholder="Enter body of request"
         name={"data"}
         theme="dark"
@@ -218,7 +220,7 @@ const RequestSection = ({
       {/* Params section */}
       <div
         style={{ display: openTab !== "params" && "none" }}
-        className="w-full max-h-[40vh] overflow-auto"
+        className="w-full max-h-[40vh] overflow-auto "
       >
         {selectedRequest.params.map((param, i) => (
           <InputGroup
@@ -249,18 +251,3 @@ const RequestSection = ({
 };
 
 export default RequestSection;
-
-const arrayToObjectFormatter = (array) => {
-  return array
-    .filter(
-      (elm) =>
-        elm.key && elm.value && elm.active && elm.key.split(" ").length === 1
-    )
-    .reduce(
-      (currentObj, newElm) => ({
-        ...currentObj,
-        [newElm.key]: newElm.value,
-      }),
-      {}
-    );
-};

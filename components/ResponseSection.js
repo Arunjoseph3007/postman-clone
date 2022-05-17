@@ -1,6 +1,5 @@
-import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
-import { json, jsonParseLinter } from "@codemirror/lang-json";
+import { json } from "@codemirror/lang-json";
 import { StatusCode } from "../public/StausCodes";
 
 const ResponseSection = ({ responseTime, response }) => {
@@ -32,7 +31,7 @@ const ResponseSection = ({ responseTime, response }) => {
         readOnly
         theme="dark"
         value={
-          response?.status === 200
+          response?.status
             ? JSON.stringify(response.data, null, 2)
             : JSON.stringify(response, null, 2)
         }
@@ -47,12 +46,12 @@ const ResponseSection = ({ responseTime, response }) => {
 
 export default ResponseSection;
 
-const StatusColors = {
-  1: " bg-yellow-200 text-yellow-800 ",
-  2: " bg-green-200 text-green-800 ",
-  3: " bg-yellow-200 text-yellow-800 ",
-  4: " bg-red-200 text-red-800 ",
-  5: " bg-red-200 text-red-800 ",
-};
+const StatusColors = [
+  " bg-yellow-200 text-yellow-800 ",
+  " bg-green-200 text-green-800 ",
+  " bg-yellow-200 text-yellow-800 ",
+  " bg-red-200 text-red-800 ",
+  " bg-red-200 text-red-800 ",
+];
 
-const getClasses = (code) => StatusColors[code.toString().charAt(0)] || "";
+const getClasses = (code) => StatusColors[Math.floor(code / 100)] || "";

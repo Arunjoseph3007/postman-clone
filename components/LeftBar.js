@@ -32,14 +32,14 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
   };
 
   return (
-    <div className="w-1/5 h-screen text-black overflow-[overlay] overflow-y-hidden border-r relative">
+    <div className="w-1/5 h-screen text-black overflow-x-visible overflow-y-hidden border-r relative">
       <h1 className="text-4xl h-[70px] flex items-center font-light tracking-widest px-4 border-b-2">
         CELLO APIs
       </h1>
-      <div className="overflow-y-scroll max-h-[calc(100vh-130px)] pb-40">
+      <div className="overflow-y-scroll overflow-x-visible max-h-[calc(100vh-130px)] pb-40">
         {requestArray.data.map((elm, i) => (
           <div
-            className={`group py-2 px-3 text-xl capitalize border-b flex items-center justify-between relative ${
+            className={`group py-2 px-3 text-xl  overflow-x-visible capitalize border-b flex items-center justify-between relative ${
               selectedIndex === i && "bg-gray-300"
             }`}
             key={i}
@@ -53,7 +53,7 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
             <button onClick={() => handleDelete(i)}>
               <TrashIcon />
             </button>
-            <div className="absolute hidden translate-y-14 translate-x-1/2 z-50 overflow-visible px-2 py-1 text-sm rounded-md pointer-events-none group-hover:block bg-gray-800 text-white">
+            <div className="absolute hidden translate-y-14 translate-x-1/2 z-50 overflow-visible px-2 py-1 text-[.8rem] [line-height:1rem] rounded-md pointer-events-none group-hover:block bg-gray-800 text-white">
               {elm.name} <br />
               METHOD : {elm.method} <br />
               URL : {elm.url}
