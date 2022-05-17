@@ -19,7 +19,12 @@ const defaultRequest = {
 
 const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
   const handleDelete = (index) => {
-    if (index === selectedIndex) return;
+    if (requestArray.data.length === 1) return;
+
+    if (index === selectedIndex) {
+      if (index !== 0) setSelectedIndex((prev) => prev - 1);
+      else return;
+    }
 
     if (index < selectedIndex) setSelectedIndex((prev) => prev - 1);
 
@@ -49,9 +54,9 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
               <TrashIcon />
             </button>
             <div className="absolute hidden translate-y-14 translate-x-1/2 z-50 overflow-visible px-2 py-1 text-sm rounded-md pointer-events-none group-hover:block bg-gray-800 text-white">
-              name : {elm.name} <br />
-              method : {elm.method} <br />
-              url : {elm.url}
+              {elm.name} <br />
+              METHOD : {elm.method} <br />
+              URL : {elm.url}
             </div>
           </div>
         ))}

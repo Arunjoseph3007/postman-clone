@@ -30,8 +30,9 @@ export default function Home() {
   const requestArray = useArray(defaultArray);
 
   const newSession = () => {
-    setSelectedRequest(defaultArray[0]);
     requestArray.setData(defaultArray);
+    setSelectedIndex(0);
+    setSelectedRequest(defaultArray[0]);
     localStorage.removeItem("session");
   };
 
@@ -41,7 +42,7 @@ export default function Home() {
 
   useEffect(() => {
     selectedRequest && requestArray.update(selectedIndex, selectedRequest);
-  }, [selectedRequest]);
+  }, [ selectedRequest]);
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("session"));
@@ -60,6 +61,7 @@ export default function Home() {
           requestArray={requestArray}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
+          setSelectedRequest={setSelectedRequest}
         />
         <div className="w-4/5 h-screen overflow-auto">
           <RequestSection

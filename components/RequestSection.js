@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import axios from "axios";
-import { ExclamationIcon, PlusIcon, TrashIcon } from "../public/SVGs";
+import { ExclamationIcon, PlusIcon } from "../public/SVGs";
+import InputGroup from "./InputGroup";
+import GetCodeDialog from "./GetCodeDialog";
 //https://jsonplaceholder.typicode.com/todos/1
 
 const newItem = { key: "", value: "", active: true };
@@ -18,39 +20,12 @@ const RequestSection = ({
   const [openTab, setOpenTab] = useState("body");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ message: "" });
+  const getCodeRef=useRef()
 
   const handleChange = (e) => {
     setSelectedRequest((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleArrayChange = (e, parameter, i) => {
-    const field = e.target.name;
-    const fieldArray = selectedRequest[field];
-
-    setSelectedRequest((prev) => ({
-      ...prev,
-      [field]: [
-        ...fieldArray.slice(0, i),
-        { ...fieldArray[i], [parameter]: e.target.value },
-        ...fieldArray.slice(i + 1, fieldArray.length),
-      ],
-    }));
-  };
-
-  const handleArrayToggle = (e, i) => {
-    const field = e.target.name;
-    const fieldArray = selectedRequest[field];
-
-    setSelectedRequest((prev) => ({
-      ...prev,
-      [field]: [
-        ...fieldArray.slice(0, i),
-        { ...fieldArray[i], active: e.target.checked },
-        ...fieldArray.slice(i + 1, fieldArray.length),
-      ],
     }));
   };
 
@@ -62,8 +37,7 @@ const RequestSection = ({
       return setMessage({ message: "Please Enter URL" });
 
     try {
-      selectedRequest.data &&
-        JSON.parse(selectedRequest.data);
+      selectedRequest.data && JSON.parse(selectedRequest.data);
     } catch (e) {
       return setMessage({ message: e.message + " in body" });
     }
@@ -121,6 +95,12 @@ const RequestSection = ({
           onClick={newSession}
         >
           New Session
+        </button>
+        <button
+          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          onClick={()=>getCodeRef?.current?.showModal()}
+        >
+          Get Code
         </button>
       </div>
 
@@ -213,45 +193,14 @@ const RequestSection = ({
         className="w-full max-h-[40vh] overflow-auto"
       >
         {selectedRequest.headers.map((header, i) => (
-          <div className={`w-full flex items-center bg-white border-b`} key={i}>
-            <input
-              className="mx-4 bg-black accent-gray-900"
-              type="checkbox"
-              name="headers"
-              checked={header.active}
-              onChange={(e) => handleArrayToggle(e, i)}
-            />
-            <input
-              className="flex-1 border-x p-3 text-xl "
-              type="text"
-              name="headers"
-              placeholder="Key"
-              value={header.key}
-              onChange={(e) => handleArrayChange(e, "key", i)}
-            />
-            <input
-              className="flex-1 border-x p-3 text-xl "
-              type="text"
-              name="headers"
-              placeholder="Value"
-              value={header.value}
-              onChange={(e) => handleArrayChange(e, "value", i)}
-            />
-            <button
-              onClick={() =>
-                setSelectedRequest((prev) => ({
-                  ...prev,
-                  headers: [
-                    ...prev.headers.slice(0, i),
-                    ...prev.headers.slice(i + 1, prev.headers.length),
-                  ],
-                }))
-              }
-              className="mx-4"
-            >
-              <TrashIcon />
-            </button>
-          </div>
+          <InputGroup
+            key={i}
+            index={i}
+            selectedRequest={selectedRequest}
+            setSelectedRequest={setSelectedRequest}
+            object={header}
+            name="headers"
+          />
         ))}
         <button
           className="bg-black text-white px-5 py-2 mt-3 rounded-md"
@@ -272,45 +221,14 @@ const RequestSection = ({
         className="w-full max-h-[40vh] overflow-auto"
       >
         {selectedRequest.params.map((param, i) => (
-          <div className={`w-full flex items-center bg-white border-b`} key={i}>
-            <input
-              className="mx-4 bg-black accent-gray-900"
-              type="checkbox"
-              name="params"
-              checked={param.active}
-              onChange={(e) => handleArrayToggle(e, i)}
-            />
-            <input
-              className="flex-1 border-x p-3 text-xl "
-              type="text"
-              name="params"
-              placeholder="Key"
-              value={param.key}
-              onChange={(e) => handleArrayChange(e, "key", i)}
-            />
-            <input
-              className="flex-1 border-x p-3 text-xl "
-              type="text"
-              name="params"
-              placeholder="Value"
-              value={param.value}
-              onChange={(e) => handleArrayChange(e, "value", i)}
-            />
-            <button
-              onClick={() =>
-                setSelectedRequest((prev) => ({
-                  ...prev,
-                  params: [
-                    ...prev.params.slice(0, i),
-                    ...prev.params.slice(i + 1, prev.params.length),
-                  ],
-                }))
-              }
-              className="mx-4"
-            >
-              <TrashIcon />
-            </button>
-          </div>
+          <InputGroup
+            key={i}
+            index={i}
+            selectedRequest={selectedRequest}
+            setSelectedRequest={setSelectedRequest}
+            object={param}
+            name="params"
+          />
         ))}
         <button
           className="bg-black text-white px-5 py-2 mt-3 rounded-md"
@@ -324,6 +242,8 @@ const RequestSection = ({
           <PlusIcon />
         </button>
       </div>
+
+      <GetCodeDialog selectedRequest={selectedRequest} getCodeRef={getCodeRef} />
     </div>
   );
 };
