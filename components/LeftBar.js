@@ -1,4 +1,7 @@
+import { useRef } from "react";
 import { TrashIcon, PlusIcon, RequestIcon } from "../public/SVGs";
+import InfoModal from "./InfoModal";
+import NewRequestModal from "./NewRequestModal";
 
 const defaultRequest = {
   name: "New Reqeust",
@@ -18,6 +21,9 @@ const defaultRequest = {
 };
 
 const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
+  const dialogRef = useRef();
+  const infoRef = useRef();
+
   const handleDelete = (index) => {
     if (requestArray.data.length === 1) return;
 
@@ -31,11 +37,19 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
     requestArray.remove(index);
   };
 
+  const addRequest = (req) => {
+    requestArray.push(req);
+  };
+
   return (
     <div className="w-1/5 h-screen text-black overflow-x-visible overflow-y-hidden border-r relative">
-      <h1 className="text-4xl h-[70px] flex items-center font-light tracking-widest px-4 border-b-2">
+      <h1
+        onClick={() => infoRef.current.showModal()}
+        className="text-4xl h-[70px] flex items-center font-light tracking-widest px-4 border-b-2  cursor-pointer"
+      >
         CELLO APIs
       </h1>
+      <InfoModal dialogRef={infoRef} />
       <div className="overflow-y-scroll overflow-x-visible max-h-[calc(100vh-130px)] pb-40">
         {requestArray.data.map((elm, i) => (
           <div
@@ -62,11 +76,12 @@ const LeftBar = ({ requestArray, setSelectedIndex, selectedIndex }) => {
         ))}
       </div>
       <button
-        onClick={() => requestArray.push({ ...defaultRequest })}
+        onClick={() => dialogRef.current.showModal()}
         className="w-full h-[60px] absolute bottom-0 inset-x-0 flex items-center justify-center bg-gray-400 mt-4 mx-auto"
       >
         <PlusIcon />
       </button>
+      <NewRequestModal dialogRef={dialogRef} addRequest={addRequest} />
     </div>
   );
 };
