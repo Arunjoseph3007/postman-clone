@@ -38,7 +38,7 @@ const NewRequestModal = ({ dialogRef, addRequest }) => {
       <h1 className="text-4xl h-[70px] flex items-center font-light tracking-wide border-b-2">
         Add New Request
       </h1>
-      <hr/>
+      <hr />
       <form className="mt-2" onSubmit={handleSubmit}>
         <div className="w-full flex my-1 items-center justify-between">
           <label className="my-2 text-xl">Name</label>
@@ -72,7 +72,7 @@ const NewRequestModal = ({ dialogRef, addRequest }) => {
                 value={method}
                 onInput={handleChange}
               />
-                <label htmlFor={method}>{method}</label>
+              <label htmlFor={method}>{method}</label>
             </div>
           ))}
         </div>

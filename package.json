@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "serve": "cross-env NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^0.20.0",
     "@codemirror/lang-json": "^0.20.0",
     "@uiw/react-codemirror": "^4.7.0",
     "axios": "^0.27.2",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.1",
     "next": "12.1.5",
     "next-pwa": "^5.5.2",
     "react": "18.1.0",
