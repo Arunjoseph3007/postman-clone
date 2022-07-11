@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { CloseIcon } from "../public/SVGs";
+import { CloseIcon } from "../../public/SVGs";
 
 const defaultRequest = {
   name: "New Reqeust",
-  method: "GET",
   data: "",
   url: "",
   headers: [
@@ -38,7 +37,7 @@ const NewRequestModal = ({ dialogRef, addRequest }) => {
       <h1 className="text-4xl h-[70px] flex items-center font-light tracking-wide border-b-2">
         Add New Request
       </h1>
-      <hr/>
+      <hr />
       <form className="mt-2" onSubmit={handleSubmit}>
         <div className="w-full flex my-1 items-center justify-between">
           <label className="my-2 text-xl">Name</label>
@@ -62,25 +61,12 @@ const NewRequestModal = ({ dialogRef, addRequest }) => {
             value={newRequest.url}
           />
         </div>
-        <div className="flex ">
-          {["GET", "PUT", "POST", "DELETE"].map((method, i) => (
-            <div key={i} className="mr-5">
-              <input
-                type="radio"
-                id={method}
-                name="method"
-                value={method}
-                onInput={handleChange}
-              />
-                <label htmlFor={method}>{method}</label>
-            </div>
-          ))}
-        </div>
+
         <button
           type="submit"
           className="bg-black my-3 text-white p-2 px-4 rounded-md"
         >
-          Copy Code
+          Add
         </button>
       </form>
       <form method="dialog">

@@ -19,8 +19,8 @@ export function useArray(defaultValue) {
 
   const clear = () => setArray([]);
 
-  const saveSession = () =>
-    localStorage.setItem("session", JSON.stringify(array));
+  const saveSession = (type) =>
+    localStorage.setItem(type, JSON.stringify(array));
 
   return {
     data: array,

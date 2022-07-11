@@ -58,7 +58,7 @@ const InputGroup = ({
         onChange={(e) => handleArrayToggle(e, index)}
       />
       <input
-        className="flex-1 border-x p-3 text-xl "
+        className="flex-1 border-x p-2 text-xl "
         type="text"
         name={name}
         placeholder="Key"
@@ -66,14 +66,14 @@ const InputGroup = ({
         onChange={(e) => handleArrayChange(e, "key", index)}
       />
       <input
-        className="flex-1 border-x p-3 text-xl "
+        className="flex-1 border-x p-2 text-xl "
         type="text"
         name={name}
         placeholder="Value"
         value={object.value}
         onChange={(e) => handleArrayChange(e, "value", index)}
       />
-      <button onClick={() => handleArrayDelete(index)} className="mx-4">
+      <button onClick={() => handleArrayDelete(index)} className="mx-2">
         <TrashIcon />
       </button>
     </div>

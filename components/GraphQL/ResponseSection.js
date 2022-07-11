@@ -1,12 +1,12 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { StatusCode } from "../public/StausCodes";
+import { StatusCode } from "/public/StausCodes";
 
 const ResponseSection = ({ responseTime, response }) => {
   return (
-    <div className="w-full h-1/2 border text-black p-3">
+    <div className="w-full h-1/2 border text-black ">
       <div className="flex w-full items-center justify-between pr-4">
-        <h1 className="text-4xl">Response</h1>
+        <h1 className="text-xl p-2">Response</h1>
         {responseTime && (
           <div
             className={`flex gap-3 p-2 rounded-md ${
@@ -36,8 +36,9 @@ const ResponseSection = ({ responseTime, response }) => {
             : JSON.stringify(response, null, 2)
         }
         placeholder="some text"
-        className="w-full rounded-md overflow-hidden border mt-4"
-        height="200px"
+        className="w-full border mt-0"
+        height="450px"
+        maxWidth="700px"
         extensions={[json()]}
       />
     </div>

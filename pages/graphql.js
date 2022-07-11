@@ -1,15 +1,14 @@
 import Head from "next/head";
-import LeftBar from "../components/REST/LeftBar";
-import RequestSection from "../components/REST/RequestSection";
-import ResponseSection from "../components/REST/ResponseSection";
+import LeftBar from "../components/GraphQL/LeftBar";
+import RequestSection from "../components/GraphQL/RequestSection";
+import ResponseSection from "../components/GraphQL/ResponseSection";
 import { useState, useEffect } from "react";
 import { useArray } from "../Hooks/CustomHooks";
-import RequestForm from "../components/REST/RequestForm";
+import RequestForm from "../components/GraphQL/RequestForm";
 import { useHotKeys } from "../Hooks/useHotKeys";
 //https://jsonplaceholder.typicode.com/todos/1
-const defaultArray = ["GET", "POST", "PUT", "DELETE"].map((method) => ({
-  name: `${method} Request`,
-  method: method,
+const defaultArray = ["Get", "Update", "Delete"].map((method) => ({
+  name: `${method} Query`,
   data: "",
   url: "",
   headers: [
@@ -17,11 +16,7 @@ const defaultArray = ["GET", "POST", "PUT", "DELETE"].map((method) => ({
     { key: "", value: "", active: true },
     { key: "", value: "", active: true },
   ],
-  params: [
-    { key: "", value: "", active: true },
-    { key: "", value: "", active: true },
-    { key: "", value: "", active: true },
-  ],
+  variables: "{}",
 }));
 
 export default function Home() {
@@ -35,11 +30,11 @@ export default function Home() {
     requestArray.setData(defaultArray);
     setSelectedIndex(0);
     setSelectedRequest(defaultArray[0]);
-    localStorage.removeItem("REST");
+    localStorage.removeItem("GraphQL");
   };
 
   const saveSession = () => {
-    requestArray.saveSession("REST");
+    requestArray.saveSession("GraphQL");
   };
 
   useEffect(() => {
@@ -51,7 +46,7 @@ export default function Home() {
   }, [selectedRequest]);
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem("REST"));
+    const session = JSON.parse(localStorage.getItem("GraphQL"));
     if (!session) return;
     requestArray.setData(session);
     setSelectedRequest(session[selectedIndex]);
