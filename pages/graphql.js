@@ -1,12 +1,12 @@
 import Head from "next/head";
 import LeftBar from "../components/GraphQL/LeftBar";
 import RequestSection from "../components/GraphQL/RequestSection";
-import ResponseSection from "../components/GraphQL/ResponseSection";
+import ResponseSection from "../components/ResponseSection";
 import { useState, useEffect } from "react";
 import { useArray } from "../Hooks/CustomHooks";
 import RequestForm from "../components/GraphQL/RequestForm";
-import { useHotKeys } from "../Hooks/useHotKeys";
-//https://jsonplaceholder.typicode.com/todos/1
+import SplitPane from "react-split-pane";
+
 const defaultArray = ["Get", "Update", "Delete"].map((method) => ({
   name: `${method} Query`,
   data: "",
@@ -64,7 +64,7 @@ export default function Home() {
           setSelectedIndex={setSelectedIndex}
           setSelectedRequest={setSelectedRequest}
         />
-        <div className="w-full h-screen overflow-auto  border-1 border-red-500">
+        <div className="w-full h-screen overflow-auto">
           <RequestForm
             selectedRequest={selectedRequest}
             setSelectedRequest={setSelectedRequest}
@@ -73,13 +73,13 @@ export default function Home() {
             newSession={newSession}
             saveSession={saveSession}
           />
-          <div className="flex  border-1 border-red-500">
+          <SplitPane>
             <RequestSection
               setSelectedRequest={setSelectedRequest}
               selectedRequest={selectedRequest}
             />
             <ResponseSection response={response} responseTime={responseTime} />
-          </div>
+          </SplitPane>
         </div>
       </div>
     </>

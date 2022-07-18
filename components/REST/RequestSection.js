@@ -1,10 +1,8 @@
-import axios from "axios";
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
 import { useState, useRef } from "react";
 import InputGroup from "../InputGroup";
 import GetCodeDialog from "../GetCodeDialog";
 import { PlusIcon } from "../../public/SVGs";
+import CodeBox from '../CodeBox'
 //https://jsonplaceholder.typicode.com/todos/1
 
 const newItem = { key: "", value: "", active: true };
@@ -18,12 +16,12 @@ const RequestSection = ({ selectedRequest, setSelectedRequest }) => {
   }
 
   return (
-    <div className="w-full border text-black resize-x">
+    <div className="w-full border text-black resize-x flex flex-col">
       {/* Tab controls */}
-      <div className="flex justify-between">
-        <div>
+      <div>
+        <div className="flex h-[5vh] items-center">
           <button
-            className={`shadow-sm p-2 px-4 text-xl ${
+            className={`shadow-sm shrink p-2 px-3 ${
               openTab === "body" && "bg-gray-200"
             }`}
             onClick={() => setOpenTab("body")}
@@ -31,24 +29,24 @@ const RequestSection = ({ selectedRequest, setSelectedRequest }) => {
             Body
           </button>
           <button
-            className={`shadow-sm p-2 px-4 text-xl relative pr-8 ${
+            className={`shadow-sm p-2 px-3 pr-8 ${
               openTab === "headers" && "bg-gray-200"
             }`}
             onClick={() => setOpenTab("headers")}
           >
             Headers{" "}
-            <span className="rounded-full bg-black text-white h-5 aspect-square absolute right-0 text-sm mr-2">
+            <span className="text-xs text-gray-500">
               {selectedRequest.headers.length}
             </span>
           </button>
           <button
-            className={`shadow-sm p-2 px-4 text-xl relative pr-8 ${
+            className={`shadow-sm p-2 px-3 pr-8 ${
               openTab === "params" && "bg-gray-200"
             }`}
             onClick={() => setOpenTab("params")}
           >
             Params{" "}
-            <span className="rounded-full bg-black text-white h-5 aspect-square absolute right-0 text-sm mr-2">
+            <span className="text-xs text-gray-500">
               {selectedRequest.params.length}
             </span>
           </button>
@@ -56,16 +54,12 @@ const RequestSection = ({ selectedRequest, setSelectedRequest }) => {
       </div>
 
       {/* Body Section */}
-      <CodeMirror
+      <CodeBox
         value={selectedRequest.data}
         spellCheck={true}
         placeholder="Enter body of request"
         name={"data"}
-        theme="dark"
         style={{ display: openTab !== "body" && "none" }}
-        className={`w-full border`}
-        height="450px"
-        extensions={[json()]}
         onChange={(value, v) => {
           setSelectedRequest((prev) => ({ ...prev, data: value }));
         }}

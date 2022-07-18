@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from 'axios'
+import axios from "axios";
 import { arrayToObjectFormatter } from "../../public/utils";
 
 const RequestForm = ({
@@ -11,7 +11,7 @@ const RequestForm = ({
   setSelectedRequest,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [message,setMessage]= useState()
+  const [message, setMessage] = useState();
 
   const handleChange = (e) => {
     setSelectedRequest((prev) => ({
@@ -24,15 +24,14 @@ const RequestForm = ({
     e.preventDefault();
 
     //Ensure valid inputs
-    if (!selectedRequest.url)
-    return setMessage("Please Enter URL");
-    
+    if (!selectedRequest.url) return setMessage("Please Enter URL");
+
     try {
       selectedRequest.data && JSON.parse(selectedRequest.data);
     } catch (e) {
       return setMessage(e.message + " in body");
     }
-    
+
     //REQUEST
     try {
       setIsLoading(true);
@@ -45,7 +44,7 @@ const RequestForm = ({
         headers: arrayToObjectFormatter(selectedRequest.headers),
         params: arrayToObjectFormatter(selectedRequest.params),
       };
-      
+
       //Make request
       const start = new Date().getTime();
       const res = await axios(config);
@@ -54,10 +53,10 @@ const RequestForm = ({
       //Make suitable state updates
       setResponseTime(end - start);
       setResponse(res);
-      
+
       setIsLoading(false);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       setResponse(e.response);
       setIsLoading(false);
     }
@@ -66,30 +65,30 @@ const RequestForm = ({
   if (!selectedRequest) return null;
 
   return (
-    <div className="text-black p-3">
+    <div className="text-black flex flex-col gap-2 justify-center items-center p-2 h-[15vh]">
       {/* Head section */}
-      <div className="flex items-center gap-4">
+      <div className="flex w-full items-center gap-4">
         <input
           value={selectedRequest.name}
-          className="bg-transparent flex-1 text-4xl"
+          className="bg-transparent flex-1 text-3xl"
           onInput={handleChange}
           name="name"
         />
-        <div>Message {message}</div>
+        {message && <div>Message {message}</div>}
         <button
-          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          className="bg-black text-white p-1 px-4 self-end rounded-md"
           onClick={saveSession}
         >
           Save Session
         </button>
         <button
-          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          className="bg-black text-white p-1 px-4 self-end rounded-md"
           onClick={newSession}
         >
           New Session
         </button>
         <button
-          className="bg-black text-white p-2 px-4 self-end rounded-md"
+          className="bg-black text-white p-1 px-4 self-end rounded-md"
           onClick={() => getCodeRef?.current?.showModal()}
         >
           Get Code
@@ -99,13 +98,13 @@ const RequestForm = ({
       {/* From sectiom */}
       <form
         onSubmit={handleSubmit}
-        className="flex w-full shadow rounded overflow-hidden mt-4"
+        className="flex w-full shadow rounded overflow-hidden"
       >
         <select
           name="method"
           value={selectedRequest.method}
           onInput={handleChange}
-          className="p-2 text-gray-600 border-r pr-3 "
+          className="p-1 text-gray-600 border-r pr-3 "
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>

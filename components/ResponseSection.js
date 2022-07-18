@@ -1,45 +1,41 @@
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
 import { StatusCode } from "/public/StausCodes";
+import { ClockIcon } from "../public/SVGs";
+import CodeBox from "./CodeBox";
 
 const ResponseSection = ({ responseTime, response }) => {
   return (
-    <div className="w-full h-1/2 border text-black ">
-      <div className="flex w-full items-center justify-between pr-4">
+    <div className="w-full h-[85vh] border text-black ">
+      <div className="flex w-full h-[5vh] items-center justify-between pr-4">
         <h1 className="text-xl p-2">Response</h1>
         {responseTime && (
           <div
-            className={`flex gap-3 p-2 rounded-md ${
+            className={`flex items-center gap-2 p-2 rounded-md font-bold ${
               responseTime > 1000 ? "text-red-500" : "text-green-500"
             }`}
           >
-            <span>Response Time: {responseTime}ms</span>
+            <ClockIcon />
+            <span>{responseTime}ms</span>
           </div>
         )}
         {response?.status && (
           <div
-            className={`flex gap-3 p-2 rounded-md ${getClasses(
+            className={`flex gap-3 p-1 px-3 rounded-md font-bold ${getClasses(
               response.status
             )}`}
           >
-            <span>Status: {response.status}</span>
-            <span>Message: {StatusCode[response.status]}</span>
+            <span>{response.status}</span>
+            <span>{StatusCode[response.status]}</span>
           </div>
         )}
       </div>
-      <CodeMirror
+      <CodeBox
         readOnly
-        theme="dark"
         value={
           response?.status
             ? JSON.stringify(response.data, null, 2)
             : JSON.stringify(response, null, 2)
         }
-        placeholder="some text"
-        className="w-full border mt-0"
-        height="450px"
-        maxWidth="700px"
-        extensions={[json()]}
+        placeholder="Response will appear here."
       />
     </div>
   );
@@ -49,8 +45,8 @@ export default ResponseSection;
 
 const StatusColors = [
   " bg-yellow-200 text-yellow-800 ",
-  " bg-green-200 text-green-800 ",
   " bg-yellow-200 text-yellow-800 ",
+  " bg-green-200 text-green-800 ",
   " bg-red-200 text-red-800 ",
   " bg-red-200 text-red-800 ",
 ];

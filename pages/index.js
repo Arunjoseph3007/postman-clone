@@ -1,12 +1,12 @@
-import Head from "next/head";
 import LeftBar from "../components/REST/LeftBar";
 import RequestSection from "../components/REST/RequestSection";
-import ResponseSection from "../components/REST/ResponseSection";
+import RequestForm from "../components/REST/RequestForm";
+import ResponseSection from "../components/ResponseSection";
+import Head from "next/head";
 import { useState, useEffect } from "react";
 import { useArray } from "../Hooks/CustomHooks";
-import RequestForm from "../components/REST/RequestForm";
-import { useHotKeys } from "../Hooks/useHotKeys";
-//https://jsonplaceholder.typicode.com/todos/1
+import SplitPane from "react-split-pane";
+
 const defaultArray = ["GET", "POST", "PUT", "DELETE"].map((method) => ({
   name: `${method} Request`,
   method: method,
@@ -69,7 +69,7 @@ export default function Home() {
           setSelectedIndex={setSelectedIndex}
           setSelectedRequest={setSelectedRequest}
         />
-        <div className="w-full h-screen overflow-auto  border-1 border-red-500">
+        <div className="w-full h-screen overflow-hidden">
           <RequestForm
             selectedRequest={selectedRequest}
             setSelectedRequest={setSelectedRequest}
@@ -78,13 +78,18 @@ export default function Home() {
             newSession={newSession}
             saveSession={saveSession}
           />
-          <div className="flex  border-1 border-red-500">
+          <SplitPane split="vertical" minSize={"20%"}>
             <RequestSection
+              minSize={"25%"}
               setSelectedRequest={setSelectedRequest}
               selectedRequest={selectedRequest}
+              />
+            <ResponseSection 
+              minSize={"25%"}
+              response={response} 
+              responseTime={responseTime} 
             />
-            <ResponseSection response={response} responseTime={responseTime} />
-          </div>
+          </SplitPane>
         </div>
       </div>
     </>
